@@ -17,7 +17,7 @@ import retrofit2.http.Header;
 public interface GalleryServiceProxy {
 
   @GET("users/me")
-  Single<User> getProfile(@Header("Authorixation") String bearerToken);
+  Single<User> getProfile(@Header("Authorization") String bearerToken);
 
   static GalleryServiceProxy getInstance() {
     return InstanceHolder.INSTANCE;
