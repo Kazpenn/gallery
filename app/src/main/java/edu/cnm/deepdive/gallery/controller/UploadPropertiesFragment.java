@@ -3,18 +3,22 @@ package edu.cnm.deepdive.gallery.controller;
 import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import com.squareup.picasso.Picasso;
 import edu.cnm.deepdive.gallery.R;
 import edu.cnm.deepdive.gallery.databinding.FragmentUploadPropertiesBinding;
 import edu.cnm.deepdive.gallery.viewmodel.MainViewModel;
 
-public class UploadPropertiesFragment extends DialogFragment {
+public class UploadPropertiesFragment extends DialogFragment implements TextWatcher {
 
   private FragmentUploadPropertiesBinding binding;
   private Uri uri;
@@ -24,6 +28,8 @@ public class UploadPropertiesFragment extends DialogFragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    //noinspection ConstantConditions
+    uri = UploadPropertiesFragmentArgs.fromBundle(getArguments()).getContentUri();
   }
 
   @NonNull
@@ -38,7 +44,7 @@ public class UploadPropertiesFragment extends DialogFragment {
         .setNeutralButton(android.R.string.cancel, (dlg, which) -> {/* No need to fo anything. */})
         .setPositiveButton(android.R.string.ok, (dlg, which) -> {/* TODO Start upload process*/})
         .create();
-    //TODO Attach text listener to validate fields.
+    dialog.setOnShowListener((dlg) -> checkSubmitConditions());
     return dialog;
   }
 
@@ -51,6 +57,31 @@ public class UploadPropertiesFragment extends DialogFragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    Picasso
+        .get()
+        .load(uri)
+        .into(binding.image);
+    binding.title.addTextChangedListener(this);
     //TODO Set up view model and observe as necessary.
+  }
+
+  @Override
+  public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+  }
+
+  @Override
+  public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+  }
+
+  @Override
+  public void afterTextChanged(Editable s) {
+    checkSubmitConditions();
+  }
+
+  private void checkSubmitConditions() {
+    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+    positive.setEnabled(!binding.title.getText().toString().trim().isEmpty());
   }
 }
