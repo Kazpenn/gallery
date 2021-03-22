@@ -1,9 +1,9 @@
 package edu.cnm.deepdive.gallery.service;
 
-import android.media.Image;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.cnm.deepdive.gallery.BuildConfig;
+import edu.cnm.deepdive.gallery.model.Image;
 import edu.cnm.deepdive.gallery.model.User;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
