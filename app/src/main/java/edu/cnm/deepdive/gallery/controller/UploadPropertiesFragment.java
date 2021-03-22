@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import com.squareup.picasso.Picasso;
 import edu.cnm.deepdive.gallery.R;
 import edu.cnm.deepdive.gallery.databinding.FragmentUploadPropertiesBinding;
@@ -42,7 +43,7 @@ public class UploadPropertiesFragment extends DialogFragment implements TextWatc
         .setTitle("Upload Properties")
         .setView(binding.getRoot())
         .setNeutralButton(android.R.string.cancel, (dlg, which) -> {/* No need to fo anything. */})
-        .setPositiveButton(android.R.string.ok, (dlg, which) -> {/* TODO Start upload process*/})
+        .setPositiveButton(android.R.string.ok, (dlg, which) -> upload())
         .create();
     dialog.setOnShowListener((dlg) -> checkSubmitConditions());
     return dialog;
@@ -62,7 +63,8 @@ public class UploadPropertiesFragment extends DialogFragment implements TextWatc
         .load(uri)
         .into(binding.image);
     binding.title.addTextChangedListener(this);
-    //TODO Set up view model and observe as necessary.
+    viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+    //TODO Observe as necessary.
   }
 
   @Override
@@ -82,6 +84,15 @@ public class UploadPropertiesFragment extends DialogFragment implements TextWatc
 
   private void checkSubmitConditions() {
     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+    //noinspection ConstantConditions
     positive.setEnabled(!binding.title.getText().toString().trim().isEmpty());
   }
+
+  @SuppressWarnings("ConstantConditions")
+  private void upload() {
+    String title = binding.title.getText().toString().trim();
+    String description = binding.description.getText().toString().trim();
+    viewModel.store(uri, title, description.isEmpty() ? null : description);
+  }
+
 }
