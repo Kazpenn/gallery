@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         logout();
         break;
       default:
-        handled = onOptionsItemSelected(item);
+        handled = super.onOptionsItemSelected(item);
     }
 
     return handled;
