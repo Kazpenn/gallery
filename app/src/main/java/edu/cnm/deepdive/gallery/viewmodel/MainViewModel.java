@@ -3,7 +3,6 @@ package edu.cnm.deepdive.gallery.viewmodel;
 import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.TableRow;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Lifecycle.Event;
@@ -12,10 +11,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import edu.cnm.deepdive.gallery.model.Image;
 import edu.cnm.deepdive.gallery.model.User;
 import edu.cnm.deepdive.gallery.service.ImageRepository;
 import edu.cnm.deepdive.gallery.service.UserRepository;
 import io.reactivex.disposables.CompositeDisposable;
+import java.util.List;
 
 public class MainViewModel extends AndroidViewModel implements LifecycleObserver {
 
@@ -23,6 +24,8 @@ public class MainViewModel extends AndroidViewModel implements LifecycleObserver
   private final ImageRepository imageRepository;
   private final MutableLiveData<GoogleSignInAccount> account;
   private final MutableLiveData<User> user;
+  private final MutableLiveData<Image> image;
+  private final MutableLiveData<List<Image>> images;
   private final MutableLiveData<Throwable> throwable;
   private final CompositeDisposable pending;
 
@@ -33,12 +36,23 @@ public class MainViewModel extends AndroidViewModel implements LifecycleObserver
     imageRepository = new ImageRepository(application);
     account = new MutableLiveData<>(userRepository.getAccount());
     user = new MutableLiveData<>();
+    image = new MutableLiveData<>();
+    images = new MutableLiveData<>();
     throwable = new MutableLiveData<>();
     pending = new CompositeDisposable();
+    loadImages();
   }
 
   public LiveData<User> getUser() {
     return user;
+  }
+
+  public LiveData<Image> getImage() {
+    return image;
+  }
+
+  public LiveData<List<Image>> getImages() {
+    return images;
   }
 
   public LiveData<Throwable> getThrowable() {
@@ -50,10 +64,21 @@ public class MainViewModel extends AndroidViewModel implements LifecycleObserver
     pending.add(
         imageRepository
             .add(uri, title, description)
-        .subscribe(
-            (image) -> {/* TODO Display success, etc.*/},
-            this::postThrowable
-        )
+            .subscribe(
+                (image) -> {/* TODO Display success, etc.*/},
+                this::postThrowable
+            )
+    );
+  }
+
+  public void loadImages() {
+    throwable.setValue(null);
+    pending.add(
+        imageRepository.getAll()
+            .subscribe(
+                images::postValue,
+                throwable::postValue
+            )
     );
   }
 

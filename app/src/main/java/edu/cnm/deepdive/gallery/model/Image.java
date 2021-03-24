@@ -25,6 +25,12 @@ public class Image {
   private String contentType;
 
   @Expose
+  private String href;
+
+  @Expose
+  private String title;
+
+  @Expose
   private User contributor;
 
 //  private Gallery gallery
@@ -76,6 +82,22 @@ public class Image {
 
   public void setContentType(String contentType) {
     this.contentType = contentType;
+  }
+
+  public String getHref() {
+    return href;
+  }
+
+  public void setHref(String href) {
+    this.href = href;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   public User getContributor() {

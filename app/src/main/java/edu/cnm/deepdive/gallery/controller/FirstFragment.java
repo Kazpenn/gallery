@@ -29,7 +29,7 @@ public class FirstFragment extends Fragment {
   ) {
     binding = FragmentFirstBinding.inflate(inflater, container, false);
     binding.buttonFirst.setOnClickListener((v) -> NavHostFragment.findNavController(FirstFragment.this)
-        .navigate(R.id.action_FirstFragment_to_SecondFragment));
+        .navigate(R.id.action_GalleryFragment_to_SecondFragment));
     binding.pickImage.setOnClickListener((v) -> pickImage());
     return binding.getRoot();
   }

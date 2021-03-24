@@ -15,7 +15,7 @@ import io.reactivex.Single;
 
 public class GoogleSignInService {
 
-  private static final String BEARER_TOKEN_FORMAT = "Bearer%s";
+  private static final String BEARER_TOKEN_FORMAT = "Bearer %s";
 
   private static Application context;
 
