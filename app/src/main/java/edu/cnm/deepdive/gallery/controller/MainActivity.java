@@ -5,21 +5,18 @@ import android.os.Bundle;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import edu.cnm.deepdive.gallery.R;
 import edu.cnm.deepdive.gallery.service.GoogleSignInService;
-import edu.cnm.deepdive.gallery.viewmodel.MainViewModel;
+import edu.cnm.deepdive.gallery.viewmodel.ImageViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
-  private MainViewModel viewModel;
+  private ImageViewModel viewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setUpViewModel() {
-    viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+    viewModel = new ViewModelProvider(this).get(ImageViewModel.class);
     getLifecycle().addObserver(viewModel);
     viewModel.getThrowable().observe(this, (throwable) -> {
       if(throwable != null) {
