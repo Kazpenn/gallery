@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -33,8 +34,9 @@ public class ImageRepository {
     resolver = context.getContentResolver();
     multipartFormType = MediaType.parse("multipart/form-data");
   }
+
   @SuppressWarnings("BlockingMethodInNonBlockingContext")
-  public Single<Image> add(Uri uri, String title, String description) {
+  public Single<Image> add(UUID galleryId, Uri uri, String title, String description) {
     File[] filesCreated = new File[1];
     return signInService
         .refreshBearerToken()
@@ -43,7 +45,7 @@ public class ImageRepository {
           try (
               Cursor cursor = resolver.query(uri, null, null, null, null);
               InputStream input = resolver.openInputStream(uri);
-              ) {
+          ) {
             MediaType type = MediaType.parse(resolver.getType(uri));
             int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
             cursor.moveToFirst();
@@ -53,13 +55,14 @@ public class ImageRepository {
             filesCreated[0] = outputFile;
             Files.copy(input, outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             RequestBody fileBody = RequestBody.create(outputFile, type);
-            MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", filename, fileBody);
+            MultipartBody.Part filePart = MultipartBody.Part
+                .createFormData("file", filename, fileBody);
             RequestBody titlePart = RequestBody.create(title, multipartFormType);
             if (description != null) {
               RequestBody descriptionPart = RequestBody.create(description, multipartFormType);
-              return serviceProxy.post(token, filePart, titlePart, descriptionPart);
+              return serviceProxy.post(galleryId, token, filePart, titlePart, descriptionPart);
             } else {
-              return serviceProxy.post(token, filePart, titlePart);
+              return serviceProxy.post(galleryId, token, filePart, titlePart);
             }
           }
         })
