@@ -13,13 +13,12 @@ import edu.cnm.deepdive.gallery.adapter.ImageAdapter.OnImageClickHelper;
 import edu.cnm.deepdive.gallery.databinding.FragmentImageBinding;
 import edu.cnm.deepdive.gallery.model.Image;
 import edu.cnm.deepdive.gallery.viewmodel.GalleryViewModel;
-import edu.cnm.deepdive.gallery.viewmodel.ImageViewModel;
 import java.util.UUID;
 
 public class ImageFragment extends Fragment implements OnImageClickHelper {
 
   private FragmentImageBinding binding;
-  private GalleryViewModel viewModel;
+  private GalleryViewModel galleryViewModel;
   private UUID galleryId;
 
 
@@ -37,13 +36,13 @@ public class ImageFragment extends Fragment implements OnImageClickHelper {
   }
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewModel = new ViewModelProvider(getActivity()).get(GalleryViewModel.class);
+    galleryViewModel = new ViewModelProvider(getActivity()).get(GalleryViewModel.class);
     if(getArguments() != null) {
       ImageFragmentArgs args = ImageFragmentArgs.fromBundle(getArguments());
       galleryId = UUID.fromString(args.getGalleryImages());
     }
-    viewModel.getGallery(galleryId);
-    viewModel.getGallery().observe(getViewLifecycleOwner(), (gallery) -> {
+    galleryViewModel.getGallery(galleryId);
+    galleryViewModel.getGallery().observe(getViewLifecycleOwner(), (gallery) -> {
       if(gallery != null) {
         binding.imageView.setAdapter(new ImageAdapter(getContext(), gallery.getImages(), this));
       }
